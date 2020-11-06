@@ -15,7 +15,16 @@ exe_file_icon = pygame.image.load(r"images\exe_file_icon.png")
 image_file_icon = pygame.image.load(r"images\image_file_icon.png")
 txt_file_icon = pygame.image.load(r"images\txt_file_icon.png")
 folder_file_icon = pygame.image.load(r"images\folder_file_icon.png")
-icon_width = max(python_file_icon.get_width(), exe_file_icon.get_width(), image_file_icon.get_width(), txt_file_icon.get_width(), folder_file_icon.get_width())
+Pictures_icon = pygame.image.load(r"images\Pictures_icon.png")
+Documents_icon = pygame.image.load(r"images\Documents_icon.png")
+Downloads_icon = pygame.image.load(r"images\Downloads_icon.png")
+Desktop_icon =  pygame.image.load(r"images\Desktop_icon.png")
+usnecessary_folders = [fr"C:\Users\{username}\3D Objects", fr"C:\Users\{username}\Contacts", fr"C:\Users\{username}\Links", fr"C:\Users\{username}\Favorites", fr"C:\Users\{username}\.dotnet", fr"C:\Users\{username}\.designer", fr"C:\Users\{username}\.idlerc", fr"C:\Users\{username}\.android", fr"C:\Users\{username}\Videos", fr"C:\Users\{username}\Searches", fr"C:\Users\{username}\Saved Games", fr"C:\Users\{username}\OneDrive", fr"C:\Users\{username}\Music"]
+Pictures_path = fr"C:\Users\{username}\Pictures"
+Documents_path = fr"C:\Users\{username}\Documents"
+Downloads_path = fr"C:\Users\{username}\Downloads"
+Desktop_path = fr"C:\Users\{username}\Desktop"
+icon_width = max(Pictures_icon.get_width(), python_file_icon.get_width(), exe_file_icon.get_width(), image_file_icon.get_width(), txt_file_icon.get_width(), folder_file_icon.get_width())
 def View_Folder(folder_path, can_go_back):
 	if not can_go_back:
 		go_back_button_image = pygame.image.load(r"images\go_back_button_image.png")
@@ -34,11 +43,12 @@ def View_Folder(folder_path, can_go_back):
 	y = space
 	for filename in folder_content:
 		is_folder = True
+		path = fr"{folder_path}\{filename}"
 		try:
-			listdir(fr"{folder_path}\{filename}")
+			listdir(path)
 		except:
 			is_folder = False
-		if is_folder or filename[-3:len(filename)] == ".py" or filename[-4:len(filename)] == ".exe" or filename[-4:len(filename)] == ".png" or filename[-4:len(filename)] == ".jpg" or filename[-4:len(filename)] == ".txt":
+		if not path in usnecessary_folders and (is_folder or filename[-3:len(filename)] == ".py" or filename[-4:len(filename)] == ".exe" or filename[-4:len(filename)] == ".png" or filename[-4:len(filename)] == ".jpg" or filename[-4:len(filename)] == ".txt"):
 			filename_label = Label(space * 2 + icon_width, space, (surface_width - icon_width) - space * 5, filename, font, (255, 255, 255))
 			image = pygame.Surface((surface_width - space * 2, filename_label.height + space * 2))
 			hover_image = pygame.Surface((surface_width - space * 2, filename_label.height + space * 2))
@@ -50,8 +60,21 @@ def View_Folder(folder_path, can_go_back):
 			filename_label.draw(image)
 			filename_label.draw(hover_image)
 			if is_folder:
-				image.blit(folder_file_icon, (space, image.get_height() // 2 - folder_file_icon.get_height() // 2))
-				hover_image.blit(folder_file_icon, (space, image.get_height() // 2 - folder_file_icon.get_height() // 2))
+				if path == Pictures_path:
+					image.blit(Pictures_icon, (space, image.get_height() // 2 - Pictures_icon.get_height() // 2))
+					hover_image.blit(Pictures_icon, (space, image.get_height() // 2 - Pictures_icon.get_height() // 2))
+				elif path == Documents_path:
+					image.blit(Documents_icon, (space, image.get_height() // 2 - Documents_icon.get_height() // 2))
+					hover_image.blit(Documents_icon, (space, image.get_height() // 2 - Documents_icon.get_height() // 2))
+				elif path == Downloads_path:
+					image.blit(Downloads_icon, (space, image.get_height() // 2 - Downloads_icon.get_height() // 2))
+					hover_image.blit(Downloads_icon, (space, image.get_height() // 2 - Downloads_icon.get_height() // 2))
+				elif path == Desktop_path:
+					image.blit(Desktop_icon, (space, image.get_height() // 2 - Desktop_icon.get_height() // 2))
+					hover_image.blit(Desktop_icon, (space, image.get_height() // 2 - Desktop_icon.get_height() // 2))
+				else:
+					image.blit(folder_file_icon, (space, image.get_height() // 2 - folder_file_icon.get_height() // 2))
+					hover_image.blit(folder_file_icon, (space, image.get_height() // 2 - folder_file_icon.get_height() // 2))
 			if filename[-3:len(filename)] == ".py":
 				image.blit(python_file_icon, (space, image.get_height() // 2 - python_file_icon.get_height() // 2))
 				hover_image.blit(python_file_icon, (space, image.get_height() // 2 - python_file_icon.get_height() // 2))
