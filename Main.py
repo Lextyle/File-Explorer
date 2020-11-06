@@ -10,6 +10,9 @@ window_height = size()[1]
 window = pygame.display.set_mode((window_width, window_height), pygame.FULLSCREEN)
 username = getuser()
 font = pygame.font.Font("SFPixelate.ttf", 20)
+exit_button_image = pygame.image.load(r"images\exit_button_image.png")
+exit_button_image_hover = pygame.image.load(r"images\exit_button_image_hover.png")
+exit_button = Button(window_width - exit_button_image.get_width(), 0, exit_button_image, exit_button_image_hover, 0, 0, window_width, window_height)
 python_file_icon = pygame.image.load(r"images\python_file_icon.png")
 exe_file_icon = pygame.image.load(r"images\exe_file_icon.png")
 image_file_icon = pygame.image.load(r"images\image_file_icon.png")
@@ -120,6 +123,9 @@ def View_Folder(folder_path, can_go_back):
 								file_button.y -= 20
 			if can_go_back:
 				go_back_button.update(event)
+			exit_button.update(event)
+			if exit_button.pressed:
+				pygame.quit()
 		if go_back_button.pressed:
 			break
 		if can_scroll:
@@ -140,5 +146,6 @@ def View_Folder(folder_path, can_go_back):
 			surface.blit(black_surface, (0, 0))
 		window.blit(surface, (surface_x, surface_y))
 		go_back_button.draw(window)
+		exit_button.draw(window)
 		pygame.display.flip()
 View_Folder(fr"C:\Users\{username}", False)
