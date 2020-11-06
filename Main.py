@@ -10,11 +10,19 @@ window_height = size()[1]
 window = pygame.display.set_mode((window_width, window_height), pygame.FULLSCREEN)
 username = getuser()
 font = pygame.font.Font("SFPixelate.ttf", 20)
+python_file_icon = pygame.image.load(r"images\python_file_icon.png")
+exe_file_icon = pygame.image.load(r"images\exe_file_icon.png")
+image_file_icon = pygame.image.load(r"images\image_file_icon.png")
+txt_file_icon = pygame.image.load(r"images\txt_file_icon.png")
+folder_file_icon = pygame.image.load(r"images\folder_file_icon.png")
+icon_width = max(python_file_icon.get_width(), exe_file_icon.get_width(), image_file_icon.get_width(), txt_file_icon.get_width(), folder_file_icon.get_width())
 def View_Folder(folder_path, can_go_back):
 	if not can_go_back:
 		go_back_button_image = pygame.image.load(r"images\go_back_button_image.png")
+		go_back_button_image_hover = pygame.image.load(r"images\go_back_button_image.png")
 	else:
 		go_back_button_image = pygame.image.load(r"images\go_back_button_image_2.png")
+		go_back_button_image_hover = pygame.image.load(r"images\go_back_button_image_2_hover.png")
 	surface_x = 40
 	surface_y = 40
 	surface = pygame.Surface((window_width - surface_x * 2, window_height - surface_y))
@@ -25,20 +33,41 @@ def View_Folder(folder_path, can_go_back):
 	space = 5
 	y = space
 	for filename in folder_content:
-		filename_label = Label(space, space, surface_width - space * 4, filename, font, (255, 255, 255))
-		image = pygame.Surface((surface_width - space * 2, filename_label.height + space * 2))
-		hover_image = pygame.Surface((surface_width - space * 2, filename_label.height + space * 2))
-		light_rect = pygame.Surface((surface_width - space * 2, filename_label.height + space * 2))
-		image.fill((30, 30, 30))
-		light_rect.fill((200, 200, 200))
-		light_rect.set_alpha(100)
-		hover_image.blit(light_rect, (0, 0))
-		filename_label.draw(image)
-		filename_label.draw(hover_image)
-		files.append(Button(space, y, image, hover_image, surface_x, surface_y, surface_width, surface_height))
-		files[-1].filename = filename
-		y += image.get_height()
-	go_back_button = Button(surface_x, surface_y - go_back_button_image.get_height(), go_back_button_image, go_back_button_image, 0, 0, window_width, window_height)
+		is_folder = True
+		try:
+			listdir(fr"{folder_path}\{filename}")
+		except:
+			is_folder = False
+		if is_folder or filename[-3:len(filename)] == ".py" or filename[-4:len(filename)] == ".exe" or filename[-4:len(filename)] == ".png" or filename[-4:len(filename)] == ".jpg" or filename[-4:len(filename)] == ".txt":
+			filename_label = Label(space * 2 + icon_width, space, (surface_width - icon_width) - space * 5, filename, font, (255, 255, 255))
+			image = pygame.Surface((surface_width - space * 2, filename_label.height + space * 2))
+			hover_image = pygame.Surface((surface_width - space * 2, filename_label.height + space * 2))
+			light_rect = pygame.Surface((surface_width - space * 2, filename_label.height + space * 2))
+			image.fill((30, 30, 30))
+			light_rect.fill((200, 200, 200))
+			light_rect.set_alpha(100)
+			hover_image.blit(light_rect, (0, 0))
+			filename_label.draw(image)
+			filename_label.draw(hover_image)
+			if is_folder:
+				image.blit(folder_file_icon, (space, image.get_height() // 2 - folder_file_icon.get_height() // 2))
+				hover_image.blit(folder_file_icon, (space, image.get_height() // 2 - folder_file_icon.get_height() // 2))
+			if filename[-3:len(filename)] == ".py":
+				image.blit(python_file_icon, (space, image.get_height() // 2 - python_file_icon.get_height() // 2))
+				hover_image.blit(python_file_icon, (space, image.get_height() // 2 - python_file_icon.get_height() // 2))
+			if filename[-4:len(filename)] == ".exe":
+				image.blit(exe_file_icon, (space, image.get_height() // 2 - image_file_icon.get_height() // 2))
+				hover_image.blit(exe_file_icon, (space, image.get_height() // 2 - exe_file_icon.get_height() // 2))
+			if filename[-4:len(filename)] == ".png" or filename[-4:len(filename)] == ".jpg":
+				image.blit(image_file_icon, (space, image.get_height() // 2 - image_file_icon.get_height() // 2))
+				hover_image.blit(image_file_icon, (space, image.get_height() // 2 - image_file_icon.get_height() // 2))
+			if filename[-4:len(filename)] == ".txt":
+				image.blit(txt_file_icon, (space, image.get_height() // 2 - txt_file_icon.get_height() // 2))
+				hover_image.blit(txt_file_icon, (space, image.get_height() // 2 - txt_file_icon.get_height() // 2))
+			files.append(Button(space, y, image, hover_image, surface_x, surface_y, surface_width, surface_height))
+			files[-1].filename = filename
+			y += image.get_height()
+	go_back_button = Button(surface_x, surface_y - go_back_button_image.get_height(), go_back_button_image, go_back_button_image_hover, 0, 0, window_width, window_height)
 	if len(files) > 1:
 		can_scroll = files[-1].y + files[-1].image.get_height() > surface_height
 	else:
@@ -81,6 +110,11 @@ def View_Folder(folder_path, can_go_back):
 					file_button.y += difference
 		for file_button in files:
 			file_button.draw(surface)
+		if files[0].y < 0:
+			black_surface = pygame.Surface((surface_width, 20))
+			black_surface.fill((0, 0, 0))
+			black_surface.set_alpha(100)
+			surface.blit(black_surface, (0, 0))
 		window.blit(surface, (surface_x, surface_y))
 		go_back_button.draw(window)
 		pygame.display.flip()
